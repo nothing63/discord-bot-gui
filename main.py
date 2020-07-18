@@ -1,27 +1,39 @@
 import requests
 import json
+from tkinter import *
+
+tk=Tk()
+
+tk.title("GUI bot")
+
+entry = Entry(tk, width=25, font=100)
 
 with open('config.json') as f:
   config = json.load(f)
 
 name = str(config['BotName'])
 
-print()
+def main(arg=None):
+  message = str(entry.get())
+  entry.delete(first=0, last=END)
 
-while True:
-    message = str(input(": "))
+  url = str(config['DiscordWebhookURL'])
 
-    def send():
-        url = str(config['DiscordWebhookURL'])
+  data = {}
+  data["username"] = name
+  data["content"] = message
 
-        data = {}
-        data["username"] = name
-        data["content"] = message
+  requests.post(url, data=json.dumps(data), headers={"Content-Type": "application/json"})
 
-        requests.post(url, data=json.dumps(data), headers={"Content-Type": "application/json"})
+  print()
+  print('Message "{}" send correct'.format(message))
 
-        print()
-        print("Message send correct")
-        print()
+entry.focus()
+entry.bind("<Return>", main)
+entry.pack()
 
-    send()
+text = StringVar()
+Label(tk, textvariable=text, font=100).pack()
+text.set("Enter message and press return to send message")
+
+tk.mainloop()
