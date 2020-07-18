@@ -1,41 +1,27 @@
-import discord
-from tkinter import *
-import _thread
+import requests
+import json
 
-tk=Tk()
+with open('config.json') as f:
+  config = json.load(f)
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print('Logged in as')
-        print(self.user.name)
-        print(self.user.id)
-        print('------')
+name = str(config['BotName'])
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.bg_task = self.loop.create_task(self.my_background_task())
+print()
 
-    def x(arg=None):
-        global m
+while True:
+    message = str(input(": "))
 
-        m = str(enterM.get())
-        print(m)
-        enterM.delete(first=0, last=END)
+    def send():
+        url = str(config['DiscordWebhookURL'])
 
-    async def my_background_task(self):
-        await self.wait_until_ready()
-        channel = self.get_channel(494160969107505156) # Channel ID
-        while not self.is_closed():
-            #x = input("x: ")
-            await channel.send(m)
+        data = {}
+        data["username"] = name
+        data["content"] = message
 
-enterM = Entry(tk, width=20)
-enterM.focus()
-enterM.bind("<Return>",MyClient.x)
-enterM.pack()
+        requests.post(url, data=json.dumps(data), headers={"Content-Type": "application/json"})
 
-client = MyClient()
+        print()
+        print("Message send correct")
+        print()
 
-tk.mainloop()
-
-client.run('NzAyOTg3MDQ1NjA5NTM3NjE3.XqKlSw.RVULHNTCN0vF7iAvit9INd1s2Pk')
+    send()
